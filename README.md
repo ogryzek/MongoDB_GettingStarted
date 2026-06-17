@@ -73,18 +73,24 @@ const client = new MongoClient(uri, {
   }
 });
 
-client.connect(async (err) => {
-    if (err) console.error(err);
-
+async function run() {
+  try {
+    await client.connect();
+ 
     const db = client.db("test");
-    const collection = db.collection("people");
 
-    const personDoc = {
+    const collection = db.collection("people");
+    const personDocument = {
         "name": {"first": "Drew", "last": "Ogryzek"},
         "contribs": ["lol", "hey", "yo"],
         "views": "1"
     };
-    const person = await collection.insertOne(personDoc);
-    
-    client.close();
-});
+
+    const person = await collection.insertOne(personDocument);
+
+  } finally {
+    await client.close();
+  }
+}
+run().catch(console.dir);
+```
