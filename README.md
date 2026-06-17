@@ -28,10 +28,10 @@ You can view the full code sample from the MongoDB Atlas dialog. It should look 
 ```js
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://123and_db_user:<db_password>@mysupercluster1.dzw39tj.mongodb.net/?appName=MySuperCluster1";
+const connectionString = "mongodb+srv://123and_db_user:<db_password>@mysupercluster1.dzw39tj.mongodb.net/?appName=MySuperCluster1";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
+const client = new MongoClient(connectionString, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
@@ -57,4 +57,34 @@ run().catch(console.dir);
 You will of course need to replace `<db_password>` with your password. If everything went well, you should see the following message when you run `node app.js`:
 ```
 Pinged your deployment. You successfully connected to MongoDB!
-```
+```  
+  
+## Add Data to a Collection  
+  
+```js
+const {MongoClient, ServerApiVersion} = require('mongodb');
+const uri = "mongodb+srv://123and_db_user:<db_password>@mysupercluster1.dzw39tj.mongodb.net/?appName=MySuperCluster1";
+
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+client.connect(async (err) => {
+    if (err) console.error(err);
+
+    const db = client.db("test");
+    const collection = db.collection("people");
+
+    const personDoc = {
+        "name": {"first": "Drew", "last": "Ogryzek"},
+        "contribs": ["lol", "hey", "yo"],
+        "views": "1"
+    };
+    const person = await collection.insertOne(personDoc);
+    
+    client.close();
+});
